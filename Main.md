@@ -203,5 +203,5 @@ sudo kill -9 <PID>
 
 ![Alt text](Screenshot%202025-03-03%20at%205.50.52 PM.png)
 
-![Alt text](Screenshot%202025-03-03%20at%205.50.27 PM.png)
+
 
