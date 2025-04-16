@@ -3,9 +3,9 @@
 # This script updates the worker.service.ts file of the Angular application with the public IP address of the server.
 
 # Usage: ./updateFile.sh
-
+set -x
 # Define the path to the worker.service.ts file
-FILE_PATH="angular-fronted/src/app/services/worker.service.ts"
+FILE_PATH="../angular-fronted/src/app/services/worker.service.ts"
 
 # Check if the file exists
 if [ ! -f "$FILE_PATH" ]; then
