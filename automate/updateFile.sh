@@ -1,4 +1,4 @@
-i-0c12bd01948bb6332#!/bin/bash
+#!/bin/bash
 
 # This script updates the worker.service.ts file of the Angular application with the public IP address of the server.
 
