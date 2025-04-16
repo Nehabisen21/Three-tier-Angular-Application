@@ -16,25 +16,6 @@ pipeline {
             }
         }
 
-        stage('Install Docker') {
-            steps {
-                echo 'Installing Docker...'
-                script {
-                    // Install Docker if not already installed
-                    sh 'sudo apt-get update && sudo apt-get install -y docker.io'
-
-                    // Start Docker service
-                    sh 'sudo systemctl start docker'
-
-                    // Enable Docker service to start on boot
-                    sh 'sudo systemctl enable docker'
-
-                    // Add Jenkins user to Docker group
-                    sh 'sudo usermod -aG docker jenkins'
-                }
-            }
-        }
-
         stage('Clone Repository') {
             steps {
                 echo 'Cloning repository...'
