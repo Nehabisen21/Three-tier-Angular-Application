@@ -5,7 +5,7 @@
 # Usage: ./updateFile.sh
 
 # Define the path to the worker.service.ts file
-FILE_PATH="/home/ubuntu/Three-tier-Angular-Application/angular-fronted/src/app/services/worker.service.ts"
+FILE_PATH="angular-fronted/src/app/services/worker.service.ts"
 
 # Check if the file exists
 if [ ! -f "$FILE_PATH" ]; then
