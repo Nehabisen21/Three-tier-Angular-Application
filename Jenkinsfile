@@ -27,7 +27,7 @@ pipeline {
             steps {
                 echo 'Updating Angular endpoints...'
                 script {
-                    dir("automate"){
+                    dir("Three-tier-Angular-Application/automate"){
                         // Update the Angular endpoint
                         sh 'chmod +x updateFile.sh'
                         // Execute the script to update the file
@@ -39,12 +39,12 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir("spring-backend") {
+                dir("Three-tier-Angular-Application/spring-backend") {
                     echo 'Building Backend Spring Boot application...'
                     sh 'docker build -t spring-backend .'
                 }
 
-                dir("angular-frontend") {
+                dir("Three-tier-Angular-Application/angular-frontend") {
                     echo 'Building Angular Frontend application...'
                     sh 'docker build -t angular-frontend .'
                 }
