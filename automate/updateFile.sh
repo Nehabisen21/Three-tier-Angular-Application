@@ -1,4 +1,4 @@
-#!/bin/bash
+i-0c12bd01948bb6332#!/bin/bash
 
 # This script updates the worker.service.ts file of the Angular application with the public IP address of the server.
 
@@ -14,7 +14,7 @@ if [ ! -f "$FILE_PATH" ]; then
 fi
 
 # Get the public IP address of the server
-INSTANCE_ID="i-0ee177c8f3cdd7103"
+INSTANCE_ID="i-0c12bd01948bb6332"
 
 ipv4_address=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
 
