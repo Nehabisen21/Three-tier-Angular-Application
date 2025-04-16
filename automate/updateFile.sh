@@ -18,6 +18,8 @@ INSTANCE_ID="i-0c12bd01948bb6332"
 
 ipv4_address=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
 
+echo "IP Found: ${ipv4_address}"
+
 # Check if the command was successful
 if [ $? -ne 0 ]; then
     echo "Failed to get the public IP address"
