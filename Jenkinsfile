@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    environment {
+        MYSQL_DB   = 'springbackend'
+    }
+
     stages {
         
         stage('Workspace Cleanup') {
@@ -8,6 +12,25 @@ pipeline {
                 script {
                     // Clean up the workspace before starting the build
                     cleanWs()
+                }
+            }
+        }
+
+        stage('Install Docker') {
+            steps {
+                echo 'Installing Docker...'
+                script {
+                    // Install Docker if not already installed
+                    sh 'sudo apt-get update && sudo apt-get install -y docker.io'
+
+                    // Start Docker service
+                    sh 'sudo systemctl start docker'
+
+                    // Enable Docker service to start on boot
+                    sh 'sudo systemctl enable docker'
+
+                    // Add Jenkins user to Docker group
+                    sh 'sudo usermod -aG docker jenkins'
                 }
             }
         }
@@ -51,20 +74,25 @@ pipeline {
             steps {
                 echo 'Deploying application...'
                 script {
-                    dir("docker-compose") {
+                        withCredentials([string(credentialsId: 'MYSQL_ROOT_PASSWORD', variable: 'MYSQL_ROOT_PASSWORD')]) {
                         // Create docker network with name three-tier
                         sh 'docker network create three-tier'
 
                         // Run MySQL container in three-tier network
-                        sh 'docker run -itd --name mysql --network three-tier -e MYSQL_ROOT_PASSWORD=springbackend -e MYSQL_DATABASE=springbackend mysql:latest' 
+                        sh 'docker run -itd --name mysql --network three-tier -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_DATABASE=$MYSQL_DB mysql:latest'
+
+                        // Import SQL dump into MySQL container
+                        sh 'docker cp /home/jenkins/workspace/Three-tier-Angular-Application/springbackend.sql mysql:/'
+
+                        // 
+                        sh 'docker exec -it mysql bash -c "mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DB < /springbackend.sql"'
 
                         // Run Spring Boot container in three-tier network
                         sh 'docker run -itd --name spring-backend --network three-tier -p 8080:8080 spring-backend'
 
                         // Run Angular container in three-tier network
                         sh 'docker run -itd --name angular-frontend --network three-tier -p 80:80 angular-frontend'
-
-                    }
+                        }
                 }
             }
         }
