@@ -27,11 +27,12 @@ pipeline {
             steps {
                 echo 'Updating Angular endpoints...'
                 script {
-                    dir("Three-tier-Angular-Application/automate"){
+                    dir('automate'){
                         // Update the Angular endpoint
+                        sh 'ls -lrt'
                         sh 'chmod +x updateFile.sh'
                         // Execute the script to update the file
-                        sh './updateFile.sh'
+                        sh 'bash updateFile.sh'
                     }
                 }
             }
@@ -39,12 +40,12 @@ pipeline {
 
         stage('Build') {
             steps {
-                dir("Three-tier-Angular-Application/spring-backend") {
+                dir("spring-backend") {
                     echo 'Building Backend Spring Boot application...'
                     sh 'docker build -t spring-backend .'
                 }
 
-                dir("Three-tier-Angular-Application/angular-frontend") {
+                dir("angular-frontend") {
                     echo 'Building Angular Frontend application...'
                     sh 'docker build -t angular-frontend .'
                 }
@@ -61,12 +62,16 @@ pipeline {
 
                         // Run MySQL container in three-tier network
                         sh 'docker run -itd --name mysql --network three-tier -e MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD -e MYSQL_DATABASE=$MYSQL_DB mysql:latest'
-
+                        
+                        // Wait for MYSQL container to be running
+                        sh 'sleep 30'
+                        
                         // Import SQL dump into MySQL container
-                        sh 'docker cp /home/jenkins/workspace/Three-tier-Angular-Application/springbackend.sql mysql:/'
-
-                        // 
-                        sh 'docker exec -it mysql bash -c "mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DB < /springbackend.sql"'
+                        sh """
+                            #!/bin/bash
+                            docker cp "/var/lib/jenkins/workspace/${JOB_NAME}/springbackend.sql" mysql:/
+                        """
+                        sh 'docker exec mysql bash -c "mysql -h mysql -u root -p$MYSQL_ROOT_PASSWORD $MYSQL_DB < /springbackend.sql"'
 
                         // Run Spring Boot container in three-tier network
                         sh 'docker run -itd --name spring-backend --network three-tier -p 8080:8080 spring-backend'
