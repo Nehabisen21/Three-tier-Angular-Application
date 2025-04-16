@@ -1,6 +1,5 @@
 pipeline {
     agent any
-
     environment {
         MYSQL_DB   = 'springbackend'
     }
